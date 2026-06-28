@@ -9,5 +9,5 @@ database: SNOWFLAKE_SAMPLE_DATA
 schema: TPCDS_SF100TCL
 
 # SQL files settings
-folder: C:\Users\diwak\OneDrive\Desktop\python_files
+folder: .
 pattern: "*.txt"
