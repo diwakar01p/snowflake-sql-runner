@@ -1,0 +1,13 @@
+# Snowflake connection configuration
+# Password is NOT stored here for security — it will be prompted at runtime
+
+account: EXITYOV-QE33421
+user: DIWAKAR01P
+role: ACCOUNTADMIN
+warehouse: COMPUTE_WH
+database: SNOWFLAKE_SAMPLE_DATA
+schema: TPCDS_SF100TCL
+
+# SQL files settings
+folder: C:\Users\diwak\OneDrive\Desktop\python_files
+pattern: "*.txt"

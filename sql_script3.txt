@@ -1,0 +1,5 @@
+select 'store_sale_file3' as obj,'Count_check' as test_case, count(*) as cnt from store_sales 
+union 
+select 'inventory_file3' as obj,'sum_check' as test_case, count(*) as cnt from inventory
+union 
+select 'item_test_file3' as obj,'date_check' as test_case, count(*) as cnt from item ;

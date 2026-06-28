@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+
+# Logs and outputs
+logs/
+*.log
+*.xlsx
+*.csv
+
+# Editor files
+.vscode/
+*.swp
+
+# Config with sensitive info (if you later store credentials here)
+config.yaml

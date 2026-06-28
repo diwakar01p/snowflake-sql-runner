@@ -1,0 +1,5 @@
+select 'store_sale_test' as obj,'Count_check' as test_case, count(*) as cnt from store_sales 
+union 
+select 'inventory_test' as obj,'Count_check' as test_case, count(*) as cnt from inventory
+union 
+select 'item_test' as obj,'Count_check' as test_case, count(*) as cnt from item ;
