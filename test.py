@@ -6,6 +6,7 @@ import argparse
 import csv
 import getpass
 import logging
+import sys
 import time
 try:
     import yaml
@@ -16,12 +17,10 @@ import os
 import snowflake.connector
 from openpyxl import Workbook
 
-# Default config file location (same directory as this script)
 CONFIG_FILE = Path(__file__).parent / 'config.yaml'
 
 
 def load_config(path: Path):
-    """Load YAML config file."""
     if not path or not path.exists():
         return {}
     if yaml is None:
@@ -32,7 +31,6 @@ def load_config(path: Path):
 
 
 def setup_logging(log_path: Path, verbose: bool = False):
-    """Configure file+console logging."""
     log_path.parent.mkdir(parents=True, exist_ok=True)
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
@@ -46,14 +44,12 @@ def setup_logging(log_path: Path, verbose: bool = False):
 
 
 def list_sql_files(folder: Path, pattern: str):
-    """Return sorted list of files in `folder` matching `pattern`."""
     files = sorted(folder.glob(pattern))
     files = [f for f in files if f.is_file() and not f.name.startswith('_')]
     return files
 
 
 def run_sql_files(conn_params, files, output_excel: Path, output_csv, log):
-    """Connect to Snowflake, run each SQL statement, and write results."""
     conn = snowflake.connector.connect(**conn_params)
     cursor = conn.cursor()
 
@@ -131,16 +127,13 @@ def main():
     p.add_argument('--verbose', action='store_true')
     args = p.parse_args()
 
-    # Load config file
     cfg = load_config(args.config)
     if not cfg:
         print(f'Config file not found: {args.config}')
-        print('Create a config.yaml with your connection details.')
         return
 
     print(f'Loaded config from: {args.config}')
 
-    # Resolve folder and pattern from config
     folder = args.folder or Path(cfg.get('folder', '.'))
     pattern = cfg.get('pattern', '*.txt')
 
@@ -157,8 +150,16 @@ def main():
     for f in files:
         print(f'  - {f.name}')
 
-    # Only prompt for password at runtime (everything else from config)
-    password = getpass.getpass('\nEnter Snowflake password: ')
+    # Password: env variable (for Jenkins/CI) or interactive prompt
+    password = os.getenv('SNOWFLAKE_PASSWORD')
+    if password:
+        print('Using password from SNOWFLAKE_PASSWORD environment variable.')
+    else:
+        password = getpass.getpass('\nEnter Snowflake password: ')
+
+    if not password:
+        print('ERROR: No password provided. Exiting.')
+        sys.exit(1)
 
     conn_params = dict(
         account=cfg.get('account', 'EXITYOV-QE33421'),
